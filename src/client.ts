@@ -31,11 +31,11 @@ export default class SpecServiceClient {
         this.fetch = settings.fetch
     }
 
-    async perform(payload?: object): Promise<{ data: any | null; error: ApiError | null }> {
+    async perform(...args: any[]): Promise<{ data: any | null; error: ApiError | null }> {
         try {
             const headers = { ...this.headers }
-            const data = await post(this.fetch, this.url, payload || {}, { headers })
-            return { data, error: null }
+            const resp = await post(this.fetch, this.url, { args: args || [] }, { headers })
+            return { data: resp?.data, error: null }
         } catch (e) {
             return { data: null, error: e as ApiError }
         }
