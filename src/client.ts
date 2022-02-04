@@ -35,7 +35,15 @@ export default class SpecServiceClient {
         try {
             const headers = { ...this.headers }
             const resp = await post(this.fetch, this.url, { args: args || [] }, { headers })
-            return { data: resp?.data, error: null }
+            const data = resp?.data
+            const message = resp?.message
+
+            if (!data && message) {
+                const status = message.includes('violates row-level security') ? 403 : 500
+                throw { message, status }
+            }
+
+            return { data, error: null }
         } catch (e) {
             return { data: null, error: e as ApiError }
         }
